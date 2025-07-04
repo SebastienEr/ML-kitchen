@@ -1,0 +1,8 @@
+# requirements.txt
+pymupdf
+sentence-transformers
+faiss-cpu
+matplotlib
+gpt4all
+numpy
+flask

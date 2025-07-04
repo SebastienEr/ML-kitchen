@@ -1,0 +1,88 @@
+{
+  "zones": [
+    {
+      "name": "R\u00e9ception",
+      "x": 0,
+      "y": 0,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Stockage Sec",
+      "x": 0,
+      "y": 1,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Stockage Froid",
+      "x": 0,
+      "y": 2,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "L\u00e9gumerie",
+      "x": 2,
+      "y": 0,
+      "w": 2,
+      "h": 2
+    },
+    {
+      "name": "Pr\u00e9paration Froide",
+      "x": 4,
+      "y": 0,
+      "w": 3,
+      "h": 1
+    },
+    {
+      "name": "Pr\u00e9paration Chaude",
+      "x": 4,
+      "y": 1,
+      "w": 3,
+      "h": 1
+    },
+    {
+      "name": "Cuisson Principale",
+      "x": 7,
+      "y": 0,
+      "w": 3,
+      "h": 2
+    },
+    {
+      "name": "P\u00e2tisserie",
+      "x": 10,
+      "y": 0,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Dressage",
+      "x": 10,
+      "y": 1,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Plonge Batterie",
+      "x": 2,
+      "y": 2,
+      "w": 3,
+      "h": 1
+    },
+    {
+      "name": "Plonge Vaisselle",
+      "x": 5,
+      "y": 2,
+      "w": 3,
+      "h": 1
+    },
+    {
+      "name": "Exp\u00e9dition",
+      "x": 8,
+      "y": 2,
+      "w": 4,
+      "h": 1
+    }
+  ]
+}

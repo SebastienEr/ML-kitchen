@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍳 Kitchen Planner Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            background: white;
+            margin: 10px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: #f8fafc;
+            border-right: 1px solid #e5e7eb;
+            padding: 90px 20px 20px 20px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .tool-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-panel h3 {
+            color: #111827;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .equipment-item {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .equipment-item:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .equipment-item:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Canvas */
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background: #fafbfc;
+            margin-top: 70px;
+            overflow: hidden;
+        }
+
+        .canvas {
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: 
+                radial-gradient(circle at 20px 20px, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow: auto;
+        }
+
+        .kitchen-layout {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-width: 800px;
+            min-height: 600px;
+        }
+
+        /* Equipment on canvas */
+        .placed-equipment {
+            position: absolute;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #2563eb;
+            transition: all 0.2s;
+            min-width: 60px;
+            min-height: 60px;
+            user-select: none;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .placed-equipment:hover {
+            border-color: #1e40af;
+            background: rgba(30, 64, 175, 0.15);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .placed-equipment.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Chef characters */
+        .chef {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #f59e0b;
+            border-radius: 50%;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 20;
+            transition: all 0.3s ease;
+        }
+
+        .chef:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Walls and doors */
+        .wall {
+            position: absolute;
+            background: #374151;
+            z-index: 1;
+        }
+
+        .wall.horizontal {
+            height: 20px;
+        }
+
+        .wall.vertical {
+            width: 20px;
+        }
+
+        .door {
+            position: absolute;
+            border: 2px solid #059669;
+            background: rgba(5, 150, 105, 0.1);
+            z-index: 2;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #059669;
+            font-weight: bold;
+        }
+
+        /* Statistics panel */
+        .stats-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 50px;
+            padding: 12px 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .tool-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        .tool-btn:hover {
+            background: #2563eb;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tool-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Dimensions */
+        .dimension-line {
+            position: absolute;
+            background: #6b7280;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .dimension-horizontal {
+            height: 1px;
+            border-top: 1px solid #6b7280;
+        }
+
+        .dimension-vertical {
+            width: 1px;
+            border-left: 1px solid #6b7280;
+        }
+
+        .dimension-label {
+            position: absolute;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+            pointer-events: none;
+            z-index: 16;
+        }
+
+        /* Grid helper */
+        .grid-visible {
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Success message */
+        .success-message {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .success-message.visible {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                🍳 <span>Kitchen Planner Pro</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="addChef()">
+                    👨‍🍳 Ajouter Cuisinier
+                </button>
+                <button class="btn btn-secondary" onclick="toggleDimensions()">
+                    📏 Cotations
+                </button>
+                <button class="btn btn-secondary" onclick="toggleGrid()">
+                    ⚏ Grille
+                </button>
+                <button class="btn btn-secondary" onclick="saveLayout()">
+                    💾 Sauvegarder
+                </button>
+                <button class="btn btn-primary" onclick="exportLayout()">
+                    📥 Exporter
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Equipment Tools -->
+            <div class="tool-panel">
+                <h3>🔥 Équipement de Cuisson</h3>
+                <div class="equipment-grid">
+                    <div class="equipment-item" onclick="addEquipment('four', '🔥 Four', 120, 80)">
+                        🔥 Four
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('plancha', '🍳 Plancha', 100, 60)">
+                        🍳 Plancha
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('friteuse', '🍟 Friteuse', 80, 60)">
+                        🍟 Friteuse
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('grill', '🥩 Grill', 100, 70)">
+                        🥩 Grill
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-panel">
+                <h3>❄️ Réfrigération</h3>
+                <div class="equipment-grid">
+                    <div class="equipment-item" onclick="addEquipment('frigo', '🧊 Frigo', 60, 120)">
+                        🧊 Frigo
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('congelateur', '🧊 Congélateur', 60, 100)">
+                        🧊 Congélateur
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('cellule', '🏠 Cellule', 80, 80)">
+                        🏠 Cellule
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('cave', '🍷 Cave', 100, 60)">
+                        🍷 Cave
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-panel">
+                <h3>🚿 Lavage</h3>
+                <div class="equipment-grid">
+                    <div class="equipment-item" onclick="addEquipment('plonge', '🚿 Plonge', 120, 60)">
+                        🚿 Plonge
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('lave-vaisselle', '🍽️ Lave-vaisselle', 80, 80)">
+                        🍽️ Lave-vaisselle
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('evier', '🚰 Évier', 60, 40)">
+                        🚰 Évier
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('bac', '🗃️ Bac', 80, 40)">
+                        🗃️ Bac
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-panel">
+                <h3>🥄 Préparation</h3>
+                <div class="equipment-grid">
+                    <div class="equipment-item" onclick="addEquipment('table', '📋 Table', 120, 60)">
+                        📋 Table
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('billot', '🪓 Billot', 80, 60)">
+                        🪓 Billot
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('plan', '📏 Plan', 100, 50)">
+                        📏 Plan
+                    </div>
+                    <div class="equipment-item" onclick="addEquipment('etagere', '📚 Étagère', 40, 100)">
+                        📚 Étagère
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-panel">
+                <h3>📊 Statistiques</h3>
+                <div class="stat-item">
+                    <span>Surface totale</span>
+                    <span class="stat-value" id="total-surface">0 m²</span>
+                </div>
+                <div class="stat-item">
+                    <span>Équipements</span>
+                    <span class="stat-value" id="equipment-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Cuisiniers</span>
+                    <span class="stat-value" id="chef-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Efficacité</span>
+                    <span class="stat-value" id="efficiency">100%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Canvas -->
+        <div class="canvas-container">
+            <div class="canvas" id="canvas">
+                <div class="kitchen-layout" id="kitchen-layout">
+                    <!-- Walls -->
+                    <div class="wall horizontal" style="top: 50px; left: 50px; width: 400px;"></div>
+                    <div class="wall horizontal" style="bottom: 50px; left: 50px; width: 400px;"></div>
+                    <div class="wall vertical" style="top: 50px; left: 50px; height: 300px;"></div>
+                    <div class="wall vertical" style="top: 50px; right: 150px; height: 300px;"></div>
+                    
+                    <!-- Door -->
+                    <div class="door" style="top: 200px; right: 150px; width: 80px; height: 20px;">
+                        🚪 Entrée
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Toolbar -->
+        <div class="toolbar">
+            <button class="tool-btn active" onclick="selectTool('select')" title="Sélection">
+                🖱️
+            </button>
+            <button class="tool-btn" onclick="selectTool('move')" title="Déplacer">
+                ✋
+            </button>
+            <button class="tool-btn" onclick="selectTool('delete')" title="Supprimer">
+                🗑️
+            </button>
+            <button class="tool-btn" onclick="clearAll()" title="Effacer tout">
+                🧹
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="success-message">
+        ✅ Action réalisée avec succès !
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedElement = null;
+        let currentTool = 'select';
+        let isDragging = false;
+        let showDimensions = false;
+        let showGrid = false;
+        let placedEquipment = [];
+        let chefs = [];
+        let equipmentCounter = 0;
+        let chefCounter = 0;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🍳 Kitchen Planner Pro - Interface chargée');
+            initializeCanvas();
+            updateStats();
+            showMessage('Interface chargée et prête !');
+        });
+
+        // Afficher un message de succès
+        function showMessage(text) {
+            const messageEl = document.getElementById('success-message');
+            messageEl.textContent = text;
+            messageEl.classList.add('visible');
+            setTimeout(() => {
+                messageEl.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Sélection d'outil
+        function selectTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const canvas = document.getElementById('canvas');
+            switch(tool) {
+                case 'move':
+                    canvas.style.cursor = 'move';
+                    break;
+                case 'delete':
+                    canvas.style.cursor = 'crosshair';
+                    break;
+                default:
+                    canvas.style.cursor = 'default';
+            }
+            
+            showMessage(`Outil sélectionné: ${tool}`);
+        }
+
+        // Ajouter un équipement
+        function addEquipment(type, name, width, height) {
+            equipmentCounter++;
+            
+            const equipment = document.createElement('div');
+            equipment.className = 'placed-equipment';
+            equipment.style.left = (100 + Math.random() * 200) + 'px';
+            equipment.style.top = (100 + Math.random() * 200) + 'px';
+            equipment.style.width = width + 'px';
+            equipment.style.height = height + 'px';
+            equipment.textContent = name;
+            equipment.dataset.type = type;
+            equipment.dataset.id = 'eq_' + equipmentCounter;
+            
+            // Event listeners
+            equipment.addEventListener('mousedown', (e) => startDrag(e, equipment));
+            equipment.addEventListener('click', (e) => selectEquipment(e, equipment));
+            equipment.addEventListener('dblclick', (e) => editEquipment(equipment));
+            
+            document.getElementById('kitchen-layout').appendChild(equipment);
+            placedEquipment.push(equipment);
+            
+            updateStats();
+            createDimensions(equipment);
+            showMessage(`${name} ajouté !`);
+        }
+
+        // Ajouter un cuisinier
+        function addChef() {
+            chefCounter++;
+            
+            const chef = document.createElement('div');
+            chef.className = 'chef';
+            chef.innerHTML = '👨‍🍳';
+            chef.style.left = (200 + Math.random() * 300) + 'px';
+            chef.style.top = (150 + Math.random() * 200) + 'px';
+            chef.dataset.id = 'chef_' + chefCounter;
+            
+            chef.addEventListener('mousedown', (e) => startDrag(e, chef));
+            chef.addEventListener('dblclick', () => animateChef(chef));
+            
+            document.getElementById('kitchen-layout').appendChild(chef);
+            chefs.push(chef);
+            
+            updateStats();
+            showMessage('Cuisinier ajouté !');
+        }
+
+        // Animation du cuisinier
+        function animateChef(chef) {
+            const originalTransform = chef.style.transform;
+            chef.style.transform = 'scale(1.5) rotate(360deg)';
+            chef.innerHTML = '🤗';
+            
+            setTimeout(() => {
+                chef.style.transform = originalTransform;
+                chef.innerHTML = '👨‍🍳';
+            }, 1000);
+            
+            showMessage('Cuisinier content !');
+        }
+
+        // Commencer le drag
+        function startDrag(e, element) {
+            if (currentTool === 'delete') {
+                deleteElement(element);
+                return;
+            }
+            
+            if (currentTool !== 'select' && currentTool !== 'move') return;
+            
+            e.preventDefault();
+            selectedElement = element;
+            isDragging = true;
+            
+            const rect = element.getBoundingClientRect();
+            const canvasRect = document.getElementById('kitchen-layout').getBoundingClientRect();
+            
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                const x = e.clientX - canvasRect.left - offsetX;
+                const y = e.clientY - canvasRect.top - offsetY;
+                
+                element.style.left = Math.max(0, x) + 'px';
+                element.style.top = Math.max(0, y) + 'px';
+                
+                updateDimensions(element);
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('mouseup', stopDrag);
+                showMessage('Élément déplacé !');
+            }
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        // Sélectionner un équipement
+        function selectEquipment(e, equipment) {
+            e.stopPropagation();
+            
+            // Désélectionner tous
+            document.querySelectorAll('.placed-equipment').forEach(eq => 
+                eq.classList.remove('selected'));
+            
+            // Sélectionner actuel
+            equipment.classList.add('selected');
+            selectedElement = equipment;
+            
+            showMessage(`Sélectionné: ${equipment.textContent}`);
+        }
+
+        // Éditer un équipement
+        function editEquipment(equipment) {
+            const newName = prompt('Nouveau nom:', equipment.textContent);
+            if (newName) {
+                equipment.textContent = newName;
+                showMessage('Nom modifié !');
+            }
+        }
+
+        // Supprimer un élément
+        function deleteElement(element) {
+            if (element.dimensionElements) {
+                element.dimensionElements.forEach(el => el.remove());
+            }
+            
+            placedEquipment = placedEquipment.filter(eq => eq !== element);
+            chefs = chefs.filter(chef => chef !== element);
+            
+            element.remove();
+            selectedElement = null;
+            
+            updateStats();
+            showMessage('Élément supprimé !');
+        }
+
+        // Toggle grille
+        function toggleGrid() {
+            showGrid = !showGrid;
+            const canvas = document.getElementById('canvas');
+            canvas.classList.toggle('grid-visible', showGrid);
+            
+            showMessage(showGrid ? 'Grille activée' : 'Grille désactivée');
+        }
+
+        // Toggle dimensions
+        function toggleDimensions() {
+            showDimensions = !showDimensions;
+            
+            if (showDimensions) {
+                placedEquipment.forEach(eq => createDimensions(eq));
+                showMessage('Cotations activées');
+            } else {
+                document.querySelectorAll('.dimension-line, .dimension-label').forEach(el => el.remove());
+                placedEquipment.forEach(eq => eq.dimensionElements = null);
+                showMessage('Cotations masquées');
+            }
+        }
+
+        // Créer dimensions
+        function createDimensions(element) {
+            if (!showDimensions) return;
+            
+            // Supprimer anciennes dimensions
+            if (element.dimensionElements) {
+                element.dimensionElements.forEach(el => el.remove());
+            }
+            
+            const rect = element.getBoundingClientRect();
+            const canvasRect = document.getElementById('kitchen-layout').getBoundingClientRect();
+            
+            const left = parseInt(element.style.left);
+            const top = parseInt(element.style.top);
+            const width = parseInt(element.style.width);
+            const height = parseInt(element.style.height);
+            
+            // Ligne largeur
+            const widthLine = document.createElement('div');
+            widthLine.className = 'dimension-line dimension-horizontal';
+            widthLine.style.left = left + 'px';
+            widthLine.style.top = (top - 15) + 'px';
+            widthLine.style.width = width + 'px';
+            
+            // Label largeur
+            const widthLabel = document.createElement('div');
+            widthLabel.className = 'dimension-label';
+            widthLabel.textContent = width + ' cm';
+            widthLabel.style.left = (left + width/2 - 20) + 'px';
+            widthLabel.style.top = (top - 25) + 'px';
+            
+            // Ligne hauteur
+            const heightLine = document.createElement('div');
+            heightLine.className = 'dimension-line dimension-vertical';
+            heightLine.style.left = (left - 15) + 'px';
+            heightLine.style.top = top + 'px';
+            heightLine.style.height = height + 'px';
+            
+            // Label hauteur
+            const heightLabel = document.createElement('div');
+            heightLabel.className = 'dimension-label';
+            heightLabel.textContent = height + ' cm';
+            heightLabel.style.left = (left - 45) + 'px';
+            heightLabel.style.top = (top + height/2 - 10) + 'px';
+            
+            const layout = document.getElementById('kitchen-layout');
+            layout.appendChild(widthLine);
+            layout.appendChild(widthLabel);
+            layout.appendChild(heightLine);
+            layout.appendChild(heightLabel);
+            
+            element.dimensionElements = [widthLine, widthLabel, heightLine, heightLabel];
+        }
+
+        // Mettre à jour dimensions
+        function updateDimensions(element) {
+            if (showDimensions && element.dimensionElements) {
+                createDimensions(element);
+            }
+        }
+
+        // Initialiser canvas
+        function initializeCanvas() {
+            const canvas = document.getElementById('canvas');
+            
+            canvas.addEventListener('click', function(e) {
+                if (e.target === canvas || e.target.id === 'kitchen-layout') {
+                    document.querySelectorAll('.placed-equipment').forEach(eq => 
+                        eq.classList.remove('selected'));
+                    selectedElement = null;
+                }
+            });
+        }
+
+        // Mettre à jour statistiques
+        function updateStats() {
+            let totalSurface = 0;
+            placedEquipment.forEach(eq => {
+                const width = parseInt(eq.style.width) / 100;
+                const height = parseInt(eq.style.height) / 100;
+                totalSurface += width * height;
+            });
+            
+            document.getElementById('total-surface').textContent = totalSurface.toFixed(1) + ' m²';
+            document.getElementById('equipment-count').textContent = placedEquipment.length;
+            document.getElementById('chef-count').textContent = chefs.length;
+            
+            const efficiency = Math.min(100, Math.max(60, 100 - (placedEquipment.length * 2)));
+            document.getElementById('efficiency').textContent = efficiency + '%';
+        }
+
+        // Tout effacer
+        function clearAll() {
+            if (confirm('Effacer tous les éléments ?')) {
+                placedEquipment.forEach(eq => {
+                    if (eq.dimensionElements) {
+                        eq.dimensionElements.forEach(el => el.remove());
+                    }
+                    eq.remove();
+                });
+                chefs.forEach(chef => chef.remove());
+                
+                document.querySelectorAll('.dimension-line, .dimension-label').forEach(el => el.remove());
+                
+                placedEquipment = [];
+                chefs = [];
+                selectedElement = null;
+                equipmentCounter = 0;
+                chefCounter = 0;
+                
+                updateStats();
+                showMessage('Tout effacé !');
+            }
+        }
+
+        // Sauvegarder
+        function saveLayout() {
+            const layout = {
+                equipment: placedEquipment.map(eq => ({
+                    type: eq.dataset.type,
+                    name: eq.textContent,
+                    x: parseInt(eq.style.left),
+                    y: parseInt(eq.style.top),
+                    width: parseInt(eq.style.width),
+                    height: parseInt(eq.style.height)
+                })),
+                chefs: chefs.map(chef => ({
+                    x: parseInt(chef.style.left),
+                    y: parseInt(chef.style.top)
+                })),
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('kitchenLayout', JSON.stringify(layout));
+            showMessage('Layout sauvegardé !');
+        }
+
+        // Exporter
+        function exportLayout() {
+            const layout = {
+                equipment: placedEquipment.map(eq => ({
+                    type: eq.dataset.type,
+                    name: eq.textContent,
+                    x: parseInt(eq.style.left),
+                    y: parseInt(eq.style.top),
+                    width: parseInt(eq.style.width),
+                    height: parseInt(eq.style.height)
+                })),
+                chefs: chefs.map(chef => ({
+                    x: parseInt(chef.style.left),
+                    y: parseInt(chef.style.top)
+                })),
+                stats: {
+                    totalSurface: document.getElementById('total-surface').textContent,
+                    equipmentCount: placedEquipment.length,
+                    chefCount: chefs.length,
+                    efficiency: document.getElementById('efficiency').textContent
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            // Download JSON
+            const blob = new Blob([JSON.stringify(layout, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kitchen-layout-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showMessage('Layout exporté !');
+        }
+
+        // Charger layout sauvegardé
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('kitchenLayout');
+            if (saved) {
+                try {
+                    const layout = JSON.parse(saved);
+                    
+                    layout.equipment.forEach(item => {
+                        addEquipment(item.type, item.name, item.width, item.height);
+                        const lastEquipment = placedEquipment[placedEquipment.length - 1];
+                        lastEquipment.style.left = item.x + 'px';
+                        lastEquipment.style.top = item.y + 'px';
+                    });
+                    
+                    layout.chefs.forEach(chef => {
+                        addChef();
+                        const lastChef = chefs[chefs.length - 1];
+                        lastChef.style.left = chef.x + 'px';
+                        lastChef.style.top = chef.y + 'px';
+                    });
+                    
+                    showMessage('Layout restauré !');
+                } catch (e) {
+                    console.warn('Erreur lors du chargement:', e);
+                }
+            }
+        });
+
+        // Raccourcis clavier
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveLayout();
+                        break;
+                    case 'z':
+                        e.preventDefault();
+                        showMessage('Annuler (bientôt disponible)');
+                        break;
+                }
+            } else {
+                switch(e.key) {
+                    case 'Delete':
+                    case 'Backspace':
+                        if (selectedElement) {
+                            deleteElement(selectedElement);
+                        }
+                        break;
+                    case 'Escape':
+                        document.querySelectorAll('.placed-equipment').forEach(eq => 
+                            eq.classList.remove('selected'));
+                        selectedElement = null;
+                        break;
+                    case 'g':
+                        toggleGrid();
+                        break;
+                    case 'd':
+                        toggleDimensions();
+                        break;
+                }
+            }
+        });
+
+        console.log('🍳 Kitchen Planner Pro - Version simplifiée chargée');
+        console.log('💡 Cliquez sur les équipements pour les ajouter');
+        console.log('🎯 Raccourcis: G=Grille, D=Cotations, Suppr=Effacer');
+    </script>
+</body>
+</html>

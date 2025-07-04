@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Kitchen Planner Interactif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+        }
+        
+        .main-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: 80vh;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 2px solid #ddd;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .zone-category {
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .category-header {
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .zone-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        
+        .zone-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .zone-checkbox {
+            margin-right: 10px;
+            transform: scale(1.1);
+        }
+        
+        .zone-name {
+            flex: 1;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+        
+        .zone-size {
+            width: 60px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85em;
+            text-align: center;
+        }
+        
+        .zone-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 8px;
+            border: 1px solid #ccc;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .plan-display {
+            text-align: center;
+        }
+        
+        .plan-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error, .success {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .range-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .range-slider {
+            flex: 1;
+        }
+        
+        .range-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .equipment-list {
+            font-size: 0.75em;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                max-height: none;
+                border-right: none;
+                border-bottom: 2px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Kitchen Planner Interactif</h1>
+            <p>Personnalisez chaque détail de votre cuisine professionnelle</p>
+        </div>
+        
+        <div class="main-layout">
+            <!-- Panneau de configuration -->
+            <div class="sidebar">
+                <!-- Configuration de la pièce -->
+                <div class="section">
+                    <h3>📐 Dimensions de la Pièce</h3>
+                    
+                    <div class="form-group">
+                        <label>Largeur (mètres)</label>
+                        <div class="range-input">
+                            <input type="range" id="room-width" class="range-slider" 
+                                   min="8" max="25" value="15" step="0.5">
+                            <span class="range-value" id="room-width-value">15m</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Profondeur (mètres)</label>
+                        <div class="range-input">
+                            <input type="range" id="room-height" class="range-slider" 
+                                   min="6" max="20" value="10" step="0.5">
+                            <span class="range-value" id="room-height-value">10m</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Largeur des couloirs (mètres)</label>
+                        <div class="range-input">
+                            <input type="range" id="corridor-width" class="range-slider" 
+                                   min="0.8" max="3" value="1.5" step="0.1">
+                            <span class="range-value" id="corridor-width-value">1.5m</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sélection des zones -->
+                <div class="section">
+                    <h3>🍳 Sélection des Zones</h3>
+                    <div id="zones-selection">
+                        <!-- Les zones seront chargées dynamiquement -->
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="section">
+                    <button class="btn" onclick="generatePlan()">
+                        🚀 Générer le Plan
+                    </button>
+                    
+                    <button class="btn" onclick="savePlan()" style="background: #28a745; margin-top: 10px;">
+                        💾 Sauvegarder
+                    </button>
+                    
+                    <button class="btn" onclick="resetAll()" style="background: #dc3545; margin-top: 10px;">
+                        🔄 Recommencer
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Zone d'affichage -->
+            <div class="main-content">
+                <div class="error" id="error-msg"></div>
+                <div class="success" id="success-msg"></div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Génération de votre plan personnalisé...</p>
+                </div>
+                
+                <div class="plan-display" id="plan-display" style="display: none;">
+                    <div class="statistics" id="statistics"></div>
+                    <img id="plan-image" class="plan-image" src="" alt="Plan personnalisé">
+                    <div style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                        Cliquez sur "Sauvegarder" pour télécharger votre plan en JSON
+                    </div>
+                </div>
+                
+                <!-- Message d'accueil -->
+                <div id="welcome-message" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: #667eea; margin-bottom: 20px;">🎯 Créez Votre Cuisine Idéale</h2>
+                    <p style="font-size: 1.1em; color: #666; line-height: 1.6;">
+                        Sélectionnez les zones que vous souhaitez inclure dans votre cuisine,<br>
+                        ajustez leurs tailles et générez un plan optimisé automatiquement.
+                    </p>
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">🏗️ Zones de Préparation</h4>
+                            <p style="font-size: 0.9em; color: #666;">Légumerie, pâtisserie, boucherie...</p>
+                        </div>
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">🔥 Zones de Cuisson</h4>
+                            <p style="font-size: 0.9em; color: #666;">Fours, grillades, friture, wok...</p>
+                        </div>
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">❄️ Zones de Stockage</h4>
+                            <p style="font-size: 0.9em; color: #666;">Chambres froides, cave, réserve...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let equipmentDatabase = {};
+        let currentPlan = null;
+        
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEquipmentDatabase();
+            setupRangeSliders();
+        });
+        
+        // Configuration des sliders
+        function setupRangeSliders() {
+            const sliders = [
+                {id: 'room-width', valueId: 'room-width-value', unit: 'm'},
+                {id: 'room-height', valueId: 'room-height-value', unit: 'm'},
+                {id: 'corridor-width', valueId: 'corridor-width-value', unit: 'm'}
+            ];
+            
+            sliders.forEach(slider => {
+                const element = document.getElementById(slider.id);
+                const valueElement = document.getElementById(slider.valueId);
+                
+                element.addEventListener('input', function() {
+                    valueElement.textContent = this.value + slider.unit;
+                });
+            });
+        }
+        
+        // Chargement de la base de données d'équipements
+        async function loadEquipmentDatabase() {
+            try {
+                const response = await fetch('/api/equipment-database');
+                equipmentDatabase = await response.json();
+                renderZoneSelection();
+            } catch (error) {
+                showError('Erreur lors du chargement des équipements');
+            }
+        }
+        
+        // Rendu de la sélection des zones
+        function renderZoneSelection() {
+            const container = document.getElementById('zones-selection');
+            container.innerHTML = '';
+            
+            for (const [categoryId, zones] of Object.entries(equipmentDatabase)) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'zone-category';
+                
+                const categoryName = {
+                    'zones_preparation': '🏗️ Zones de Préparation',
+                    'zones_cuisson': '🔥 Zones de Cuisson', 
+                    'zones_stockage': '❄️ Zones de Stockage',
+                    'zones_lavage': '🧽 Zones de Lavage',
+                    'zones_service': '🍽️ Zones de Service',
+                    'zones_hygiene': '🧼 Zones d\'Hygiène',
+                    'zones_technique': '⚙️ Zones Techniques',
+                    'equipements_speciaux': '🎯 Équipements Spéciaux'
+                }[categoryId] || categoryId;
+                
+                categoryDiv.innerHTML = `
+                    <div class="category-header">${categoryName}</div>
+                    ${Object.entries(zones).map(([zoneName, zoneInfo]) => `
+                        <div class="zone-item">
+                            <input type="checkbox" class="zone-checkbox" 
+                                   id="zone-${zoneName.replace(/\s+/g, '-')}"
+                                   onchange="toggleZone('${zoneName}', this.checked)">
+                            <label class="zone-name" for="zone-${zoneName.replace(/\s+/g, '-')}">${zoneName}</label>
+                            <input type="number" class="zone-size" 
+                                   min="${zoneInfo.min_size}" max="${zoneInfo.max_size}" 
+                                   value="${zoneInfo.default}" step="0.5"
+                                   onchange="updateZoneSize('${zoneName}', this.value)">
+                            <div class="zone-color" style="background-color: ${zoneInfo.color}"></div>
+                        </div>
+                        <div class="equipment-list">${zoneInfo.equipment.join(', ')}</div>
+                    `).join('')}
+                `;
+                
+                container.appendChild(categoryDiv);
+            }
+        }
+        
+        let selectedZones = {};
+        
+        function toggleZone(zoneName, isSelected) {
+            if (isSelected) {
+                const zoneInfo = findZoneInfo(zoneName);
+                selectedZones[zoneName] = {
+                    size: zoneInfo ? zoneInfo.default : 6
+                };
+            } else {
+                delete selectedZones[zoneName];
+            }
+        }
+        
+        function updateZoneSize(zoneName, size) {
+            if (selectedZones[zoneName]) {
+                selectedZones[zoneName].size = parseFloat(size);
+            }
+        }
+        
+        function findZoneInfo(zoneName) {
+            for (const category of Object.values(equipmentDatabase)) {
+                if (category[zoneName]) {
+                    return category[zoneName];
+                }
+            }
+            return null;
+        }
+        
+        async function generatePlan() {
+            if (Object.keys(selectedZones).length === 0) {
+                showError('Veuillez sélectionner au moins une zone');
+                return;
+            }
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/generate-interactive', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        zones: selectedZones,
+                        room_width: parseFloat(document.getElementById('room-width').value),
+                        room_height: parseFloat(document.getElementById('room-height').value),
+                        corridor_width: parseFloat(document.getElementById('corridor-width').value)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentPlan = data.plan;
+                    displayPlan(data);
+                    showSuccess('Plan généré avec succès !');
+                } else {
+                    showError(data.error || 'Erreur lors de la génération');
+                }
+            } catch (error) {
+                showError('Erreur de connexion au serveur');
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayPlan(data) {
+            document.getElementById('welcome-message').style.display = 'none';
+            document.getElementById('plan-display').style.display = 'block';
+            
+            document.getElementById('plan-image').src = data.image;
+            
+            const stats = data.statistics;
+            document.getElementById('statistics').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.zones_count}</div>
+                    <div class="stat-label">Zones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_surface}m²</div>
+                    <div class="stat-label">Surface Utile</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.corridor_surface}m²</div>
+                    <div class="stat-label">Couloirs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.efficiency}%</div>
+                    <div class="stat-label">Efficacité</div>
+                </div>
+            `;
+        }
+        
+        async function savePlan() {
+            if (!currentPlan) {
+                showError('Aucun plan à sauvegarder');
+                return;
+            }
+            
+            const filename = prompt('Nom du fichier (sans extension):', 'mon_plan_personnalise');
+            if (!filename) return;
+            
+            try {
+                const response = await fetch('/api/save-plan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan: currentPlan,
+                        filename: filename
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`Plan sauvegardé: ${data.filename}`);
+                    
+                    // Téléchargement automatique
+                    const dataStr = JSON.stringify(currentPlan, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(dataBlob);
+                    link.download = data.filename;
+                    link.click();
+                } else {
+                    showError(data.error || 'Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                showError('Erreur de connexion au serveur');
+            }
+        }
+        
+        function resetAll() {
+            if (confirm('Êtes-vous sûr de vouloir tout recommencer ?')) {
+                selectedZones = {};
+                currentPlan = null;
+                
+                // Décocher toutes les cases
+                document.querySelectorAll('.zone-checkbox').forEach(cb => cb.checked = false);
+                
+                // Masquer le plan
+                document.getElementById('plan-display').style.display = 'none';
+                document.getElementById('welcome-message').style.display = 'block';
+                
+                hideMessages();
+            }
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            const errorEl = document.getElementById('error-msg');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+        
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-msg');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+        }
+        
+        function hideMessages() {
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

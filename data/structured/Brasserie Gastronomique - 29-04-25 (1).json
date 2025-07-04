@@ -1,0 +1,88 @@
+{
+  "equipements": [
+    {
+      "nom": "Hotte à",
+      "description": "Hotte à condensats inoxyable",
+      "type": "equipement"
+    },
+    {
+      "nom": "Four mixte",
+      "description": "Four mixte 10 niveaux",
+      "type": "equipement"
+    },
+    {
+      "nom": "Hotte murale",
+      "description": "Hotte murale acier inox",
+      "type": "equipement"
+    },
+    {
+      "nom": "Support de",
+      "description": "Support de four",
+      "type": "equipement"
+    },
+    {
+      "nom": "Four à",
+      "description": "Four à micro-ondes",
+      "type": "equipement"
+    },
+    {
+      "nom": "Table d'évier",
+      "description": "Table d'évier en Acier Inoxydablle - 1 Bassin",
+      "type": "equipement"
+    },
+    {
+      "nom": "IMPLANTATION MATERIEL",
+      "description": "IMPLANTATION MATERIEL",
+      "type": "equipement"
+    },
+    {
+      "nom": "N° PLAN",
+      "description": "N° PLAN",
+      "type": "equipement"
+    },
+    {
+      "nom": "01 /",
+      "description": "01 / IMPLANTATION MATERIEL",
+      "type": "equipement"
+    }
+  ],
+  "zones": [
+    {
+      "nom": "B - Zone Laverie",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "C - Zone Froide/entrée",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "A - Zone de cuisson",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "B - Zone Laverie",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "A - Zone de cuisson",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "Plaque à induction 4 zones",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "C - Zone Froide/entrée",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "D - Zone Stockage / décontamination",
+      "type": "zone_preparation"
+    },
+    {
+      "nom": "D - Zone Stockage",
+      "type": "zone_preparation"
+    }
+  ],
+  "surface_totale": 100
+}

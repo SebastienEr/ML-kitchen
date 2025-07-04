@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ Configurateur de Cuisine - Kitchen Planner Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .configurator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .config-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .config-panel {
+            padding: 40px;
+            background: #f8fafc;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #111827;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .preview-panel {
+            background: #ffffff;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .preview-canvas {
+            width: 400px;
+            height: 300px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="configurator-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏗️ Configurateur de Cuisine</h1>
+            <p>Créez votre cuisine sur mesure en quelques étapes</p>
+        </div>
+
+        <!-- Content -->
+        <div class="config-content">
+            <!-- Configuration Panel -->
+            <div class="config-panel">
+                <div class="form-section">
+                    <h3>📐 Dimensions de la Cuisine</h3>
+                    
+                    <div class="form-group">
+                        <label for="length">Longueur (m)</label>
+                        <input type="number" id="length" class="form-control" value="8" min="3" max="20" step="0.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="width">Largeur (m)</label>
+                        <input type="number" id="width" class="form-control" value="6" min="3" max="15" step="0.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="height">Hauteur (m)</label>
+                        <input type="number" id="height" class="form-control" value="3" min="2.5" max="4" step="0.1">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🎯 Type de Cuisine</h3>
+                    
+                    <div class="form-group">
+                        <label for="kitchen-type">Type d'établissement</label>
+                        <select id="kitchen-type" class="form-control">
+                            <option value="restaurant">🍽️ Restaurant traditionnel</option>
+                            <option value="brasserie">🍺 Brasserie</option>
+                            <option value="fast-food">🍔 Fast-food</option>
+                            <option value="gastronomique">⭐ Gastronomique</option>
+                            <option value="cafeteria">☕ Cafétéria</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-name">Nom du projet</label>
+                        <input type="text" id="project-name" class="form-control" value="Ma Nouvelle Cuisine" placeholder="Entrez le nom de votre projet">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="createKitchen()">🎨 Créer la Cuisine</button>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="preview-panel">
+                <h3 style="margin-bottom: 20px; color: #111827;">📊 Aperçu</h3>
+                <div class="preview-canvas" id="preview">
+                    Votre cuisine apparaîtra ici
+                </div>
+                <div style="margin-top: 20px; text-align: center; color: #6b7280;">
+                    <p><strong>Surface :</strong> <span id="surface-display">48 m²</span></p>
+                    <p><strong>Type :</strong> <span id="type-display">Restaurant traditionnel</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const length = parseFloat(document.getElementById('length').value) || 8;
+            const width = parseFloat(document.getElementById('width').value) || 6;
+            const type = document.getElementById('kitchen-type').value;
+            
+            const surface = length * width;
+            document.getElementById('surface-display').textContent = surface.toFixed(1) + ' m²';
+            
+            const typeNames = {
+                'restaurant': 'Restaurant traditionnel',
+                'brasserie': 'Brasserie',
+                'fast-food': 'Fast-food',
+                'gastronomique': 'Gastronomique',
+                'cafeteria': 'Cafétéria'
+            };
+            document.getElementById('type-display').textContent = typeNames[type] || type;
+        }
+
+        function createKitchen() {
+            const length = parseFloat(document.getElementById('length').value) || 8;
+            const width = parseFloat(document.getElementById('width').value) || 6;
+            const height = parseFloat(document.getElementById('height').value) || 3;
+            const type = document.getElementById('kitchen-type').value;
+            const name = document.getElementById('project-name').value || 'Ma Nouvelle Cuisine';
+            
+            const kitchenConfig = {
+                name: name,
+                type: type,
+                dimensions: {
+                    length: length,
+                    width: width,
+                    height: height
+                },
+                structure: {
+                    walls: [],
+                    doors: [],
+                    windows: []
+                },
+                created: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('kitchenConfig', JSON.stringify(kitchenConfig));
+            
+            alert(`✅ Configuration sauvegardée !\n\nCuisine : ${name}\nDimensions : ${length}m × ${width}m × ${height}m\nSurface : ${(length * width).toFixed(1)} m²`);
+            
+            // Redirect to main planner
+            window.location.href = '/planner';
+        }
+
+        // Update preview when values change
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreview();
+            
+            document.getElementById('length').addEventListener('input', updatePreview);
+            document.getElementById('width').addEventListener('input', updatePreview);
+            document.getElementById('kitchen-type').addEventListener('change', updatePreview);
+        });
+    </script>
+</body>
+</html>

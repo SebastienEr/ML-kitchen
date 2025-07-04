@@ -1,0 +1,67 @@
+{
+  "zones": [
+    {
+      "name": "R\u00e9ception",
+      "x": 0,
+      "y": 0,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Stockage Sec",
+      "x": 0,
+      "y": 1,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Stockage Froid",
+      "x": 0,
+      "y": 2,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Pr\u00e9paration",
+      "x": 2,
+      "y": 0,
+      "w": 4,
+      "h": 2
+    },
+    {
+      "name": "Grillade",
+      "x": 6,
+      "y": 0,
+      "w": 2,
+      "h": 2
+    },
+    {
+      "name": "Friture",
+      "x": 8,
+      "y": 0,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Dressage",
+      "x": 8,
+      "y": 1,
+      "w": 2,
+      "h": 1
+    },
+    {
+      "name": "Plonge",
+      "x": 2,
+      "y": 2,
+      "w": 4,
+      "h": 1
+    },
+    {
+      "name": "Bar",
+      "x": 6,
+      "y": 2,
+      "w": 4,
+      "h": 1
+    }
+  ]
+}

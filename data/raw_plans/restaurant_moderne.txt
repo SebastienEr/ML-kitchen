@@ -1,0 +1,28 @@
+# Exemple de plan PDF - Restaurant Moderne
+# Ce fichier simule le contenu d'un PDF de cuisine
+
+RESTAURANT MODERNE - PLAN DE CUISINE PROFESSIONNELLE
+
+ÉQUIPEMENTS PRINCIPAUX:
+- Four à convection 4 niveaux
+- Plaque de cuisson 6 feux
+- Friteuse double bac
+- Grill salamandre
+- Évier 3 bacs avec lave-vaisselle
+- Chambre froide positive
+- Congélateur armoire
+- Plan de travail inox
+
+ZONES FONCTIONNELLES:
+- Zone de réception marchandises
+- Zone de stockage sec
+- Zone de préparation froide
+- Zone de cuisson chaude
+- Zone de dressage et expédition
+- Zone de plonge et lavage
+- Zone de stockage ustensiles
+
+CARACTÉRISTIQUES:
+Surface totale: 45 m²
+Capacité: 80 couverts
+Type: Restaurant gastronomique

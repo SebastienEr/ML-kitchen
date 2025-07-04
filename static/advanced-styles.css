@@ -1,0 +1,375 @@
+/* Kitchen Planner Pro - Styles Avancés */
+
+/* Animations et transitions avancées */
+@keyframes equipmentEntry {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes chefWalk {
+    0%, 100% { transform: translateX(0) scaleX(1); }
+    25% { transform: translateX(20px) scaleX(1); }
+    50% { transform: translateX(40px) scaleX(-1); }
+    75% { transform: translateX(20px) scaleX(-1); }
+}
+
+@keyframes dimensionPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+@keyframes equipmentHover {
+    0% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+    100% { box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); }
+}
+
+/* Classes d'animation */
+.equipment-enter {
+    animation: equipmentEntry 0.6s ease-out;
+}
+
+.chef-walking {
+    animation: chefWalk 4s infinite;
+}
+
+.dimension-active {
+    animation: dimensionPulse 2s infinite;
+}
+
+.equipment-hover-effect {
+    animation: equipmentHover 0.3s ease-out;
+}
+
+/* Effets de survol avancés */
+.placed-equipment:hover {
+    animation: equipmentHover 0.3s ease-out;
+    transform: translateY(-2px);
+    z-index: 15;
+}
+
+.chef:hover {
+    animation: none;
+    transform: scale(1.3) translateY(-5px);
+    box-shadow: 0 8px 16px rgba(245, 158, 11, 0.4);
+}
+
+/* Grille magnétique */
+.magnetic-grid {
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 0;
+}
+
+.magnetic-grid:hover {
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.2) 1px, transparent 1px);
+}
+
+/* Effets de collision */
+.collision-warning {
+    border: 3px solid #ef4444 !important;
+    background: rgba(239, 68, 68, 0.2) !important;
+    animation: collision-flash 0.5s infinite alternate;
+}
+
+@keyframes collision-flash {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Zones de drop avancées */
+.drop-zone {
+    position: absolute;
+    border: 2px dashed rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: 8px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.active {
+    opacity: 1;
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.drop-zone.valid {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.drop-zone.invalid {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Indicateurs de mesure avancés */
+.measurement-line {
+    position: absolute;
+    background: linear-gradient(90deg, #6b7280, transparent 50%, #6b7280);
+    pointer-events: none;
+}
+
+.measurement-point {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #3b82f6;
+    border: 2px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Couloirs et circulation */
+.circulation-path {
+    position: absolute;
+    border: 2px dashed #f59e0b;
+    background: linear-gradient(45deg, 
+        rgba(245, 158, 11, 0.1) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(245, 158, 11, 0.1) 50%, 
+        rgba(245, 158, 11, 0.1) 75%, 
+        transparent 75%);
+    background-size: 20px 20px;
+    pointer-events: none;
+    animation: circulation-flow 3s linear infinite;
+}
+
+@keyframes circulation-flow {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 20px; }
+}
+
+/* Battements de porte */
+.door-swing-animation {
+    position: absolute;
+    border: 2px solid #059669;
+    border-radius: 50%;
+    background: conic-gradient(
+        rgba(5, 150, 105, 0.2) 0deg 90deg,
+        transparent 90deg 360deg
+    );
+    pointer-events: none;
+    animation: door-swing 2s ease-in-out infinite;
+}
+
+@keyframes door-swing {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+}
+
+/* Tooltips avancés */
+.tooltip {
+    position: absolute;
+    background: rgba(17, 24, 39, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    max-width: 250px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: rgba(17, 24, 39, 0.95);
+}
+
+/* Indicateurs de performance */
+.performance-indicator {
+    position: fixed;
+    top: 90px;
+    left: 350px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 50;
+}
+
+.performance-meter {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.performance-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Mini-map */
+.mini-map {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 150px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.mini-map-content {
+    transform: scale(0.2);
+    transform-origin: top left;
+    width: 1000px;
+    height: 750px;
+}
+
+/* Modes d'affichage */
+.thermal-view .placed-equipment[data-category="cuisson"] {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e53) !important;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+}
+
+.thermal-view .placed-equipment[data-category="refrigeration"] {
+    background: linear-gradient(45deg, #74b9ff, #0984e3) !important;
+    box-shadow: 0 0 20px rgba(116, 185, 255, 0.5);
+}
+
+.workflow-view .placed-equipment {
+    opacity: 0.7;
+}
+
+.workflow-view .workflow-connection {
+    position: absolute;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 2px;
+    z-index: 5;
+    animation: workflow-pulse 2s infinite;
+}
+
+@keyframes workflow-pulse {
+    0%, 100% { opacity: 0.6; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* Responsive design avancé */
+@media (max-width: 1200px) {
+    .performance-indicator {
+        position: static;
+        margin: 10px;
+    }
+    
+    .mini-map {
+        width: 150px;
+        height: 112px;
+    }
+}
+
+@media (max-width: 768px) {
+    .equipment-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .toolbar {
+        bottom: 10px;
+        padding: 8px 12px;
+    }
+    
+    .tool-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .mini-map {
+        display: none;
+    }
+}
+
+/* Modes sombre */
+.dark-mode {
+    background: #1f2937;
+    color: white;
+}
+
+.dark-mode .app-container {
+    background: #111827;
+}
+
+.dark-mode .sidebar {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode .tool-panel {
+    background: #374151;
+    border: 1px solid #4b5563;
+}
+
+.dark-mode .canvas {
+    background: #1f2937;
+    background-image: radial-gradient(circle at 20px 20px, #374151 1px, transparent 1px);
+}
+
+/* Accessibility */
+.high-contrast .placed-equipment {
+    border-width: 4px !important;
+    font-weight: bold !important;
+}
+
+.reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .toolbar,
+    .properties-panel,
+    .header-actions {
+        display: none !important;
+    }
+    
+    .canvas-container {
+        margin: 0 !important;
+    }
+    
+    .placed-equipment {
+        border: 2px solid black !important;
+        background: white !important;
+        color: black !important;
+    }
+}

@@ -1,0 +1,28 @@
+# Exemple de plan PDF - Brasserie Traditionnelle
+# Ce fichier simule le contenu d'un PDF de cuisine
+
+BRASSERIE TRADITIONNELLE - AMÉNAGEMENT CUISINE
+
+ÉQUIPEMENTS SPÉCIALISÉS:
+- Four à pizza
+- Plancha grande surface
+- Friteuse professionnelle
+- Grill charbon
+- Réfrigérateur 4 portes
+- Cave à vin
+- Machine à café professionnelle
+- Lave-vaisselle à convoyeur
+
+ORGANISATION SPATIALE:
+- Espace réception et stockage
+- Zone préparation légumes
+- Zone grillade et cuisson
+- Zone dressage assiettes
+- Zone service boissons
+- Espace nettoyage
+- Réserve matériel
+
+SPÉCIFICATIONS:
+Surface: 60 m²
+Service: 120 couverts
+Style: Brasserie bistrot

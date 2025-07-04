@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ Configurateur de Cuisine - Kitchen Planner Pro</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-light: #f8fafc;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .configurator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .config-steps {
+            display: flex;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            position: relative;
+        }
+
+        .step.active {
+            color: #2563eb;
+        }
+
+        .step.completed {
+            color: #10b981;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -1px;
+            width: 2px;
+            height: 30px;
+            background: #e5e7eb;
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .config-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .config-panel {
+            width: 350px;
+            padding: 30px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .preview-panel {
+            flex: 1;
+            padding: 30px;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #111827;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .preset-btn:hover {
+            border-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .preset-btn.selected {
+            border-color: #2563eb;
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #111827;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            border-color: #2563eb;
+        }
+
+        .canvas-preview {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kitchen-canvas {
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+        }
+
+        .wall {
+            position: absolute;
+            background: #374151;
+            z-index: 2;
+        }
+
+        .wall.horizontal {
+            height: 15px;
+        }
+
+        .wall.vertical {
+            width: 15px;
+        }
+
+        .door {
+            position: absolute;
+            background: #059669;
+            z-index: 3;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .window {
+            position: absolute;
+            background: #0ea5e9;
+            z-index: 3;
+            border-radius: 3px;
+        }
+
+        .dimensions-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tool-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tool-btn.active {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: white;
+        }
+
+        .info-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h4 {
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .surface-calc {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .surface-calc .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="configurator-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏗️ Configurateur de Cuisine</h1>
+            <p>Créez votre cuisine sur mesure en quelques étapes</p>
+        </div>
+
+        <!-- Steps -->
+        <div class="config-steps">
+            <div class="step active" data-step="1">
+                <div>📐 Étape 1</div>
+                <div><strong>Dimensions</strong></div>
+            </div>
+            <div class="step" data-step="2">
+                <div>🧱 Étape 2</div>
+                <div><strong>Structure</strong></div>
+            </div>
+            <div class="step" data-step="3">
+                <div>🚪 Étape 3</div>
+                <div><strong>Ouvertures</strong></div>
+            </div>
+            <div class="step" data-step="4">
+                <div>✅ Étape 4</div>
+                <div><strong>Validation</strong></div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="config-content">
+            <!-- Configuration Panel -->
+            <div class="config-panel">
+                <!-- Step 1: Dimensions -->
+                <div id="step1" class="step-content">
+                    <div class="form-section">
+                        <h3>📐 Dimensions de la Cuisine</h3>
+                        
+                        <div class="info-box">
+                            <h4>💡 Conseil</h4>
+                            <p>Une cuisine professionnelle nécessite généralement entre 15m² et 50m² selon le type d'établissement.</p>
+                        </div>
+
+                        <div class="preset-buttons">
+                            <div class="preset-btn" data-preset="small">
+                                <div><strong>🏪 Petite</strong></div>
+                                <div>3m × 5m (15m²)</div>
+                            </div>
+                            <div class="preset-btn" data-preset="medium">
+                                <div><strong>🍽️ Moyenne</strong></div>
+                                <div>5m × 6m (30m²)</div>
+                            </div>
+                            <div class="preset-btn" data-preset="large">
+                                <div><strong>🏨 Grande</strong></div>
+                                <div>6m × 8m (48m²)</div>
+                            </div>
+                            <div class="preset-btn" data-preset="custom">
+                                <div><strong>⚙️ Personnalisé</strong></div>
+                                <div>Dimensions libres</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Longueur (m)</label>
+                                <input type="number" class="form-control" id="kitchen-length" min="2" max="20" step="0.1" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label>Largeur (m)</label>
+                                <input type="number" class="form-control" id="kitchen-width" min="2" max="20" step="0.1" value="6">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hauteur sous plafond (m)</label>
+                            <input type="number" class="form-control" id="kitchen-height" min="2.2" max="4" step="0.1" value="2.8">
+                        </div>
+
+                        <div class="surface-calc">
+                            <div>Surface totale</div>
+                            <div class="value" id="total-surface">30.0 m²</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Structure -->
+                <div id="step2" class="step-content" style="display: none;">
+                    <div class="form-section">
+                        <h3>🧱 Structure et Murs</h3>
+
+                        <div class="info-box">
+                            <h4>🏗️ Instructions</h4>
+                            <p>Sélectionnez un outil puis cliquez sur l'aperçu pour dessiner. Les murs extérieurs sont automatiques.</p>
+                        </div>
+
+                        <div class="tool-selector">
+                            <div class="tool-btn active" data-tool="wall">🧱 Mur</div>
+                            <div class="tool-btn" data-tool="remove">🗑️ Effacer</div>
+                            <div class="tool-btn" data-tool="clear">🧹 Tout effacer</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Type de mur</label>
+                            <select class="form-control" id="wall-type">
+                                <option value="interior">Mur intérieur (10cm)</option>
+                                <option value="bearing">Mur porteur (20cm)</option>
+                                <option value="partition">Cloison (7cm)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Openings -->
+                <div id="step3" class="step-content" style="display: none;">
+                    <div class="form-section">
+                        <h3>🚪 Portes et Fenêtres</h3>
+
+                        <div class="tool-selector">
+                            <div class="tool-btn active" data-tool="door">🚪 Porte</div>
+                            <div class="tool-btn" data-tool="window">🪟 Fenêtre</div>
+                            <div class="tool-btn" data-tool="remove">🗑️ Effacer</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Type d'ouverture</label>
+                            <select class="form-control" id="opening-type">
+                                <option value="standard">Porte standard (80cm)</option>
+                                <option value="double">Porte double (160cm)</option>
+                                <option value="service">Porte service (90cm)</option>
+                                <option value="emergency">Sortie de secours (120cm)</option>
+                                <option value="window-small">Fenêtre standard (120cm)</option>
+                                <option value="window-large">Grande fenêtre (200cm)</option>
+                            </select>
+                        </div>
+
+                        <div class="info-box">
+                            <h4>📋 Réglementation</h4>
+                            <p>• Minimum 1 sortie de secours<br>
+                            • Largeur couloir ≥ 1.2m<br>
+                            • Accès livraisons séparé</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Validation -->
+                <div id="step4" class="step-content" style="display: none;">
+                    <div class="form-section">
+                        <h3>✅ Récapitulatif</h3>
+
+                        <div class="surface-calc">
+                            <div>Surface finale</div>
+                            <div class="value" id="final-surface">30.0 m²</div>
+                        </div>
+
+                        <div class="info-box">
+                            <h4>📊 Votre cuisine</h4>
+                            <p id="kitchen-summary">
+                                Cuisine de 30m² avec structure personnalisée
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nom de votre projet</label>
+                            <input type="text" class="form-control" id="project-name" placeholder="Ma nouvelle cuisine" value="Cuisine Professionnelle">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="prev-btn" style="display: none;">⬅️ Précédent</button>
+                    <button class="btn btn-primary" id="next-btn">Suivant ➡️</button>
+                    <button class="btn btn-primary" id="create-btn" style="display: none;">🎨 Créer la Cuisine</button>
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="preview-panel">
+                <h3>🔍 Aperçu en Temps Réel</h3>
+                <div class="canvas-preview">
+                    <div class="kitchen-canvas" id="kitchen-canvas">
+                        <!-- Walls will be added here -->
+                    </div>
+                    <div class="dimensions-display" id="dimensions-display">
+                        5.0m × 6.0m = 30.0m²
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class KitchenConfigurator {
+            constructor() {
+                this.currentStep = 1;
+                this.totalSteps = 4;
+                this.kitchenData = {
+                    length: 5,
+                    width: 6,
+                    height: 2.8,
+                    walls: [],
+                    doors: [],
+                    windows: []
+                };
+                this.currentTool = 'wall';
+                this.scale = 40; // pixels per meter
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.updatePreview();
+                this.updateSurface();
+            }
+            
+            setupEventListeners() {
+                // Dimension inputs
+                document.getElementById('kitchen-length').addEventListener('input', () => this.updateDimensions());
+                document.getElementById('kitchen-width').addEventListener('input', () => this.updateDimensions());
+                document.getElementById('kitchen-height').addEventListener('input', () => this.updateDimensions());
+                
+                // Preset buttons
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectPreset(e.target.closest('.preset-btn').dataset.preset));
+                });
+                
+                // Tool buttons
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectTool(e.target.dataset.tool));
+                });
+                
+                // Navigation buttons
+                document.getElementById('next-btn').addEventListener('click', () => this.nextStep());
+                document.getElementById('prev-btn').addEventListener('click', () => this.prevStep());
+                document.getElementById('create-btn').addEventListener('click', () => this.createKitchen());
+                
+                // Canvas clicks
+                document.getElementById('kitchen-canvas').addEventListener('click', (e) => this.handleCanvasClick(e));
+            }
+            
+            selectPreset(preset) {
+                document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('selected'));
+                document.querySelector(`[data-preset="${preset}"]`).classList.add('selected');
+                
+                const presets = {
+                    small: { length: 3, width: 5 },
+                    medium: { length: 5, width: 6 },
+                    large: { length: 6, width: 8 },
+                    custom: { length: 5, width: 6 }
+                };
+                
+                if (presets[preset]) {
+                    document.getElementById('kitchen-length').value = presets[preset].length;
+                    document.getElementById('kitchen-width').value = presets[preset].width;
+                    this.updateDimensions();
+                }
+            }
+            
+            updateDimensions() {
+                this.kitchenData.length = parseFloat(document.getElementById('kitchen-length').value);
+                this.kitchenData.width = parseFloat(document.getElementById('kitchen-width').value);
+                this.kitchenData.height = parseFloat(document.getElementById('kitchen-height').value);
+                
+                this.updatePreview();
+                this.updateSurface();
+            }
+            
+            updateSurface() {
+                const surface = this.kitchenData.length * this.kitchenData.width;
+                document.getElementById('total-surface').textContent = surface.toFixed(1) + ' m²';
+                document.getElementById('final-surface').textContent = surface.toFixed(1) + ' m²';
+                document.getElementById('dimensions-display').textContent = 
+                    `${this.kitchenData.length}m × ${this.kitchenData.width}m = ${surface.toFixed(1)}m²`;
+            }
+            
+            updatePreview() {
+                const canvas = document.getElementById('kitchen-canvas');
+                canvas.innerHTML = '';
+                
+                const canvasWidth = canvas.offsetWidth;
+                const canvasHeight = canvas.offsetHeight;
+                
+                // Calculate scale to fit kitchen in canvas
+                const scaleX = (canvasWidth - 40) / this.kitchenData.length;
+                const scaleY = (canvasHeight - 40) / this.kitchenData.width;
+                this.scale = Math.min(scaleX, scaleY);
+                
+                const kitchenPixelWidth = this.kitchenData.length * this.scale;
+                const kitchenPixelHeight = this.kitchenData.width * this.scale;
+                
+                const offsetX = (canvasWidth - kitchenPixelWidth) / 2;
+                const offsetY = (canvasHeight - kitchenPixelHeight) / 2;
+                
+                // Draw exterior walls
+                this.drawWall(offsetX, offsetY, kitchenPixelWidth, 15, true); // Top
+                this.drawWall(offsetX, offsetY + kitchenPixelHeight - 15, kitchenPixelWidth, 15, true); // Bottom
+                this.drawWall(offsetX, offsetY, 15, kitchenPixelHeight, false); // Left
+                this.drawWall(offsetX + kitchenPixelWidth - 15, offsetY, 15, kitchenPixelHeight, false); // Right
+                
+                // Draw interior walls
+                this.kitchenData.walls.forEach(wall => this.drawWallFromData(wall, offsetX, offsetY));
+                
+                // Draw doors and windows
+                this.kitchenData.doors.forEach(door => this.drawDoorFromData(door, offsetX, offsetY));
+                this.kitchenData.windows.forEach(window => this.drawWindowFromData(window, offsetX, offsetY));
+            }
+            
+            drawWall(x, y, width, height, horizontal) {
+                const wall = document.createElement('div');
+                wall.className = horizontal ? 'wall horizontal' : 'wall vertical';
+                wall.style.left = x + 'px';
+                wall.style.top = y + 'px';
+                wall.style.width = width + 'px';
+                wall.style.height = height + 'px';
+                document.getElementById('kitchen-canvas').appendChild(wall);
+            }
+            
+            handleCanvasClick(e) {
+                if (this.currentStep !== 2 && this.currentStep !== 3) return;
+                
+                const canvas = e.currentTarget;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                console.log(`Canvas clicked at: ${x}, ${y} with tool: ${this.currentTool}`);
+                
+                // TODO: Implement tool logic based on currentTool
+                if (this.currentTool === 'wall') {
+                    this.addWall(x, y);
+                } else if (this.currentTool === 'door') {
+                    this.addDoor(x, y);
+                } else if (this.currentTool === 'window') {
+                    this.addWindow(x, y);
+                }
+            }
+            
+            addWall(x, y) {
+                // Simplified wall addition - you can make this more sophisticated
+                const wall = {
+                    x: x,
+                    y: y,
+                    width: 100,
+                    height: 15,
+                    type: document.getElementById('wall-type')?.value || 'interior'
+                };
+                this.kitchenData.walls.push(wall);
+                this.updatePreview();
+            }
+            
+            addDoor(x, y) {
+                const door = {
+                    x: x,
+                    y: y,
+                    width: 30,
+                    height: 10,
+                    type: document.getElementById('opening-type')?.value || 'standard'
+                };
+                this.kitchenData.doors.push(door);
+                this.updatePreview();
+            }
+            
+            addWindow(x, y) {
+                const window = {
+                    x: x,
+                    y: y,
+                    width: 50,
+                    height: 8,
+                    type: document.getElementById('opening-type')?.value || 'window-small'
+                };
+                this.kitchenData.windows.push(window);
+                this.updatePreview();
+            }
+            
+            drawWallFromData(wall, offsetX, offsetY) {
+                const wallElement = document.createElement('div');
+                wallElement.className = 'wall horizontal';
+                wallElement.style.left = (offsetX + wall.x) + 'px';
+                wallElement.style.top = (offsetY + wall.y) + 'px';
+                wallElement.style.width = wall.width + 'px';
+                wallElement.style.height = wall.height + 'px';
+                document.getElementById('kitchen-canvas').appendChild(wallElement);
+            }
+            
+            drawDoorFromData(door, offsetX, offsetY) {
+                const doorElement = document.createElement('div');
+                doorElement.className = 'door';
+                doorElement.style.left = (offsetX + door.x) + 'px';
+                doorElement.style.top = (offsetY + door.y) + 'px';
+                doorElement.style.width = door.width + 'px';
+                doorElement.style.height = door.height + 'px';
+                doorElement.textContent = '🚪';
+                document.getElementById('kitchen-canvas').appendChild(doorElement);
+            }
+            
+            drawWindowFromData(window, offsetX, offsetY) {
+                const windowElement = document.createElement('div');
+                windowElement.className = 'window';
+                windowElement.style.left = (offsetX + window.x) + 'px';
+                windowElement.style.top = (offsetY + window.y) + 'px';
+                windowElement.style.width = window.width + 'px';
+                windowElement.style.height = window.height + 'px';
+                document.getElementById('kitchen-canvas').appendChild(windowElement);
+            }
+            
+            selectTool(tool) {
+                this.currentTool = tool;
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-tool="${tool}"]`).classList.add('active');
+                
+                if (tool === 'clear') {
+                    this.clearAll();
+                }
+            }
+            
+            clearAll() {
+                this.kitchenData.walls = [];
+                this.kitchenData.doors = [];
+                this.kitchenData.windows = [];
+                this.updatePreview();
+            }
+            
+            nextStep() {
+                if (this.currentStep < this.totalSteps) {
+                    this.currentStep++;
+                    this.updateStepDisplay();
+                }
+            }
+            
+            prevStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                    this.updateStepDisplay();
+                }
+            }
+            
+            updateStepDisplay() {
+                // Hide all step contents
+                document.querySelectorAll('.step-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show current step content
+                document.getElementById(`step${this.currentStep}`).style.display = 'block';
+                
+                // Update step indicators
+                document.querySelectorAll('.step').forEach((step, index) => {
+                    step.classList.remove('active', 'completed');
+                    if (index + 1 === this.currentStep) {
+                        step.classList.add('active');
+                    } else if (index + 1 < this.currentStep) {
+                        step.classList.add('completed');
+                    }
+                });
+                
+                // Update buttons
+                document.getElementById('prev-btn').style.display = this.currentStep > 1 ? 'block' : 'none';
+                document.getElementById('next-btn').style.display = this.currentStep < this.totalSteps ? 'block' : 'none';
+                document.getElementById('create-btn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+                
+                // Update summary
+                if (this.currentStep === 4) {
+                    this.updateSummary();
+                }
+            }
+            
+            updateSummary() {
+                const surface = this.kitchenData.length * this.kitchenData.width;
+                const wallCount = this.kitchenData.walls.length;
+                const doorCount = this.kitchenData.doors.length;
+                const windowCount = this.kitchenData.windows.length;
+                
+                const summary = `Cuisine de ${surface.toFixed(1)}m² (${this.kitchenData.length}m × ${this.kitchenData.width}m)
+                    ${wallCount > 0 ? `avec ${wallCount} mur(s) intérieur(s)` : ''}
+                    ${doorCount > 0 ? `, ${doorCount} porte(s)` : ''}
+                    ${windowCount > 0 ? `, ${windowCount} fenêtre(s)` : ''}`;
+                
+                document.getElementById('kitchen-summary').textContent = summary;
+            }
+            
+            createKitchen() {
+                const projectName = document.getElementById('project-name').value;
+                
+                // Prepare data for the main planner
+                const kitchenConfig = {
+                    name: projectName,
+                    dimensions: {
+                        length: this.kitchenData.length,
+                        width: this.kitchenData.width,
+                        height: this.kitchenData.height
+                    },
+                    structure: {
+                        walls: this.kitchenData.walls,
+                        doors: this.kitchenData.doors,
+                        windows: this.kitchenData.windows
+                    },
+                    created: new Date().toISOString()
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('kitchenConfig', JSON.stringify(kitchenConfig));
+                
+                // Redirect to main planner
+                window.location.href = '/planner';
+            }
+        }
+        
+        // Initialize configurator
+        document.addEventListener('DOMContentLoaded', () => {
+            window.configurator = new KitchenConfigurator();
+        });
+    </script>
+</body>
+</html>
